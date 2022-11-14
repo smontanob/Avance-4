@@ -1,25 +1,27 @@
 #Leer
-
+install.packages("readxl")
+library(readxl)
 library(forecast)
 library(Mcomp)
 Recaudos <- read_excel(("Recaudos.xlsx"))
 Recaudosf <- read_excel(("Recaudos futuro.xlsx"))
-#View(Recaudosf)
-#View(Recaudos)
+View(Recaudosf)
+View(Recaudos)
 #head(Recaudos)
 #head(Recaudosf)
-yri = ts(Rec,frequency=12,star=c(2017,01),end=c(2021,12))
-yrf = ts(Recf,frequency=12,star=c(2022,01),end=c(2022,09))
-#length(yri)
-#length(yrf)
-m = 9
-#View(yrf)
-#View(yri)
+yri = ts(Recaudos$Rec,frequency=12,star=c(2004,01),end=c(2019,12))
+yrf = ts(Recaudosf$Recf,frequency=12,star=c(2021,01),end=c(2021,12))
+length(yri)
+length(yrf)
+m = 12
+View(yrf)
+##View(yri)
 #win.graph()
-#autoplot(yi, xlab = "Año", ylab = "Recaudos en MM")
+#autoplot(yi, xlab = "AÃ±o", ylab = "Recaudos en MM")
+
 win.graph()
-ts.plot(yri, main="Serie temporal de recaudos", 
-        ylab= "Recaudos en MM", xlab="Año")
+ts.plot(yri, 
+        ylab= "Recaudos en MM", xlab="AÃ±o")
 frequency(yri)
 
 
@@ -27,7 +29,7 @@ head(yri)
 cycle(yri)
 
 win.graph()
-boxplot(yri~cycle(yri), xlab="Año", ylab="Recaudos mensuales en MM", main="Recaudos mensuales en MM - ciclo:Meses",
+boxplot(yri~cycle(yri), xlab="AÃ±o", ylab="Recaudos mensuales en MM", main="Recaudos mensuales en MM - ciclo:Meses",
         names = month.abb, col="lightblue")
 
 #Descomponer
@@ -36,7 +38,7 @@ win.graph()
 plot(stl(yri,"per"))
 win.graph()
 decompose(yri)
-plot(decompose(yri), xlab="Años", ylab="Recaudos en MM", names = month.name, warning())
+plot(decompose(yri), xlab="AÃ±os", ylab="Recaudos en MM", names = month.name, warning())
 np = length(yri)
 warnings(yri)
 
@@ -44,17 +46,17 @@ warnings(yri)
 
 np = length(yri)
 
-fecha = seq(as.Date("2017/01/01"), as.Date("2021/12/31"), by="months")
+fecha = seq(as.Date("2004/01/01"), as.Date("2019/12/31"), by="months")
 
 ejex.mes = seq(fecha[1],fecha[np], "months")
-ejex.año = seq(fecha[1],fecha[np],"years")
+ejex.aÃ±o = seq(fecha[1],fecha[np],"years")
 
 win.graph()
 plot(fecha,yri, xaxt="n", panel.first = grid(),type='l',
      main="Recaudos mensuales en MM",
-     ylab='Recaudos en MM', lwd = 2,col='black')
+     ylab='Recaudos en MM', lwd = 1,col='black')
 axis.Date(1, at=ejex.mes, format="%m/%y")
-axis.Date(1, at=ejex.año, labels = FALSE, tcl = -0.2)
+axis.Date(1, at=ejex.aÃ±o, labels = FALSE, tcl = -0.1)
 
 #----- Otros valores
 
@@ -65,12 +67,12 @@ It.trig = fourier(yri,4)
 It = seasonaldummy(yri)
 ti = seq(1,length(yri))
 
-#--------------------descomposición con stl
+#--------------------descomposiciÃ³n con stl
 
 y.stl <- stl(yri,"per")
 
 win.graph()
-  plot(y.stl, main="Descomposición serie STL")
+  plot(y.stl, main="DescomposiciÃ³n serie STL")
 
 St.stl = y.stl$time.series[,1]
 Tt.stl = y.stl$time.series[,2]
@@ -79,16 +81,16 @@ ti = seq(1,length(yri))
 
 yhat.stl = Tt.stl+St.stl
 
-fecha = seq(as.Date("2017/01/01"), as.Date("2021/12/31"), by="months")
+fecha = seq(as.Date("2004/01/01"), as.Date("2019/12/31"), by="months")
 
 ejex.mes = seq(fecha[1],fecha[np], "months")
-ejex.año = seq(fecha[1],fecha[np],"years")
+ejex.aÃ±o = seq(fecha[1],fecha[np],"years")
 
 win.graph()
-plot(fecha[1:(np)],yri,type='o', xlab ="meses", xaxt="n", ylab="Recaudos en MM", main="Valores ajustados con stl vs observados", col='darkgray')
+plot(fecha[1:(np)],yri,type='o', xlab ="Meses", xaxt="n", ylab="Recaudos en MM", main="Valores ajustados con stl vs observados", col='darkgray')
 lines(fecha[1:(np)],yhat.stl, col='blue')
 axis.Date(1, at=ejex.mes, format="%m/%y")
-axis.Date(1, at=ejex.año, labels = FALSE, tcl = -0.2)
+axis.Date(1, at=ejex.aÃ±o, labels = FALSE, tcl = -0.2)
 legend("topleft", 
        c("Obs","stl"), 
        pch = c(1, 3),
@@ -133,15 +135,15 @@ str(mod7.m)
 #--------------ajuste
 
 win.graph()
-plot(fecha[1:(np)],yri, panel.first = grid(),type='l', xaxt="n",
-     ylab='Recaudo en MM', xlab="Año", lwd = 2,col='gray', main="HW Amortig. vs Observados")
+plot(fecha[1:(np)],yri,panel.first = grid(),type='l', xaxt="n",
+     ylab='Recaudo en MM', xlab="AÃ±o", lwd = 2,col='gray', main="HW Amortig. vs Observados")
 axis.Date(1, at=ejex.mes, format="%m/%y")
-axis.Date(1, at=ejex.año, labels = FALSE, tcl = -0.2)
+axis.Date(1, at=ejex.aÃ±o, labels = FALSE, tcl = -0.2)
 lines(fecha[1:(np)],yhat.7,col='blue')
 legend("topleft", 
        c("Obs","HW-Amort"), 
        pch = c(1, 3),
-       col = c("black","red"))
+       col = c("black","blue"))
 
 
 medidas.yest = function(y,yest,k){
@@ -166,32 +168,31 @@ medidas.yest = function(y,yest,k){
 
 library(forecast)
 
-pron.stl = forecast(y.stl,method='ets', h=9)$mean
+pron.stl = forecast(y.stl,method='ets', h=12)$mean
 pron.stl2=forecast(y.stl)
 
-m = 9
+m = 12
 T = length(yri)
 Itf = seasonaldummy(yri,m)
-tf = seq(T+1,T+m,1)
+tf = seq(T+1,T+12,1)
 np = length(yri)
 np2=length(yrf)
 n=length(yri)+length(yrf)
 length(yri)
 length(yrf)
+seq(T+1,T+12,1)
+#View(yrf)
 
-seq(T+1,T+9,1)
-View(yrf)
-
-fecha = seq(as.Date("2022/01/01"), as.Date("2022/09/01"), by="months")
+fecha = seq(as.Date("2021/01/01"), as.Date("2021/12/31"), by="months")
 ejex.mes = seq(fecha[1],fecha[np2], "months")
-ejex.año = seq(fecha[1],fecha[np2],"years")
+ejex.aÃ±o = seq(fecha[1],fecha[np2],"years")
 
 win.graph()
 par(mfrow=c(1,1))
-plot(tf,yrf,type = 'o', main="Pronóstico")
+plot(tf,yrf,type = 'o',main="PronÃ³stico", xlim = c(193, 204), ylim = c(200,400))
 lines(tf,pron.stl, type = 'b', pch = 3,col='blue' )
-axis.Date(1, at=seq(as.Date("2022/01/01"), as.Date("2022/09/01"), by="months"), format="%m-%Y")
-axis.Date(1, at=seq(as.Date("2022/01/01"), as.Date("2022/09/01"), by="months"), labels = FALSE, tcl = -0.2)
+axis.Date(1, at=seq(as.Date("2021/01/01"), as.Date("2022/12/01"), by="months"), format="%m-%Y")
+axis.Date(1, at=seq(as.Date("2021/01/01"), as.Date("2021/12/31"), by="months"), labels = FALSE, tcl = -0.1)
 
 legend("bottomleft", 
        c("Obs", "pron.stl"), 
@@ -208,8 +209,10 @@ ypron7 = forecast(mod7.m,h=m)$mean
 
 win.graph()
 par(mfrow=c(1,1))
-plot(tf,yrf, type = 'b', main="Pronóstico Obs vs STL y HWA")
-lines(tf,pron.stl, type = 'b', pch = 3,col='blue' )
+plot(tf,yrf, type = 'b', main="PronÃ³stico Obs vs STL y HWA", ylim = c(200,400), 
+     xlim = c(193,204), ylab = "Valores pronosticados", xlab = "Meses")
+axis(1, at=c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"))
+lines(tf,pron.stl, type = 'b', pch = 3,col='blue')
 lines(tf,ypron7, type = 'b', pch = 3,col='red' )
 legend("bottomleft", 
        c("Obs", "Des.stl", "HW Amort"), 
@@ -224,5 +227,6 @@ legend("bottomleft",
 
 
 accuracy(ypron7,yrf)
+
 
 
